@@ -1,0 +1,43 @@
+{
+  "name": "HPGSC-Cache-Framework",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^10.0.8",
+    "async": "^2.5.0",
+    "axios": "^0.21.1",
+    "bcryptjs": "2.4.3",
+    "btoa": "^1.2.1",
+    "cors": "^2.8.4",
+    "dotenv": "^9.0.2",
+    "ejs": "^3.1.6",
+    "escape-html": "^1.0.3",
+    "express": "^4.17.1",
+    "express-mongo-sanitize": "^2.0.2",
+    "express-validator": "^6.10.0",
+    "file-system": "^2.2.2",
+    "helmet": "^3.21.0",
+    "http-status": "^1.5.0",
+    "https": "^1.0.0",
+    "joi": "^17.4.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^2.2.19",
+    "mongoose": "^5.2.5",
+    "node-cron": "^2.0.3",
+    "node-fetch": "^2.6.1",
+    "nodemon": "^1.18.3",
+    "path": "^0.12.7",
+    "querystring": "^0.2.1",
+    "redfort-sdk": "^1.0.18",
+    "request": "^2.87.0",
+    "secure-key-store": "1.0.2",
+    "xss-clean": "^0.1.1"
+  }
+}
