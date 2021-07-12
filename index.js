@@ -2,7 +2,6 @@ var express = require("express");
 var serveStatic = require("serve-static");
 var bodyparser = require("body-parser");
 var routes = require("./routes/routes");
-var mongoose = require("mongoose");
 var cron = require("node-cron");
 const https = require("https");
 const fs = require("fs");
@@ -14,18 +13,18 @@ const xss = require("xss-clean");
 const cors = require("cors");
 const constants = require("./utils/constant");
 require("dotenv").config();
+const request = require('request');
+const jwt = require('jsonwebtoken');
+
+let initUrl = 'https://test.zaincash.iq/transaction/init';
+let requestUrl = 'https://test.zaincash.iq/transaction/pay?id=';
+
+const serviceType = "CheckVin Report Payment";
+
+//after a successful or failed order, the user will redirect to this url
+const redirectUrl = 'http://localhost:3000/#/redirect';
 
 var app = express();
-mongoose.connect("mongodb://localhost/createVin", {
-    useNewUrlParser: true,
-});
-mongoose.Promise = global.Promise;
-
-// app.use(express.static(__dirname + "/public"));
-// app.set("views", __dirname + "/public/views");
-// app.engine("html", require("ejs").renderFile);
-// app.set("view engine", "html");
-
 app.use(cors());
 app.use(helmet());
 app.use(xss());
@@ -40,17 +39,63 @@ app.use(
         limit: "100mb",
     })
 );
+
+app.post('/api/payment', (req, res) => {
+    const time = Date.now();
+    const data = {
+      'amount': (req.body.amount)*1460,
+      'serviceType': serviceType,
+      'msisdn': 9647835077893,
+      'redirectUrl': redirectUrl,
+      'iat': time,
+      'exp': time + 600 * 60 * 4
+    };
+    const token = jwt.sign(data, "$2y$10$hBbAZo2GfSSvyqAyV2SaqOfYewgYpfR1O19gIh4SqyGWdmySZYPuS");
+    const postData = {
+      'token': token,
+      'merchantId': "5ffacf6612b5777c6d44266f",
+      'lang': "ar"
+    };
+    const requestOptions = {
+      uri: initUrl,
+      body: JSON.stringify(postData),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+  
+    request(requestOptions, function (error, response) {
+        const OperationId = JSON.parse(response.body).id;
+        var data = {
+          url:requestUrl + OperationId,
+          token:token
+        }
+        res.send(data);
+        res.end();
+    });
+  });
+
+  app.post('/api/redirect', (req, res) => {
+    console.log("token Recieved:",req.body.token)
+    const token = req.body.token;
+    if(token){
+      try {
+        var decoded = jwt.verify(token, "$2y$10$hBbAZo2GfSSvyqAyV2SaqOfYewgYpfR1O19gIh4SqyGWdmySZYPuS");
+      } catch(err) {
+        console.log("error",err)
+      }
+      if(decoded.status == 'success'){
+        console.log("sucess1111111111111111")
+        res.send("success")
+      }else {
+        console.log("failed22222222222222222")
+        res.send("success")
+      }
+    }
+  });
+
 app.use("/api", routes);
-
-// app.use(
-//     serveStatic("./app", {
-//         index: ["index.html"],
-//     })
-// );
-
-// app.use("*", function (req, res) {
-//     res.render("error.html");
-// });
 
 if (process.env.NODE_ENV == "production" || process.env.NODE_ENV == "staging") {
     app.listen(process.env.PORT || 443);

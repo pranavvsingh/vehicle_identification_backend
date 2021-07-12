@@ -2,6 +2,7 @@ const constants = require("../utils/constant");
 const btoa = require("btoa");
 const axios = require("axios");
 const allData = require("../reportData/allData");
+const models = require("../models/model");
 
 exports.autocheck = async (vincode) => {
 	try {
@@ -75,6 +76,37 @@ exports.check_photo = async (vincode) => {
 		//const check_photo = await axios.get(url);
 		const check_photo = allData.check_photoData;
 		return check_photo;
+	} catch (error) {
+		throw error;
+	}
+};
+
+exports.set_payment = async (data) => {
+	try {
+		const table = "users";
+		const set_payment = await models.insert(table, data);
+		return set_payment;
+	} catch (error) {
+		throw error;
+	}
+};
+
+exports.get_payment = async (data) => {
+	try {
+		const columns = "*"; 
+		const table = "users";
+		var condition = {};
+		if(data.phone){
+			condition = {
+				"phone":data.phone,
+			}
+		}else{
+			condition = {
+				"email":data.email,
+			}
+		}
+		const get_payment = await models.fetch(columns,table, condition);
+		return get_payment;
 	} catch (error) {
 		throw error;
 	}
