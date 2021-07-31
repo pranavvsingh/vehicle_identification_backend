@@ -1,29 +1,74 @@
-const express = require("express");
-const { vin_val, set_payment_val, get_payment_val, validate } = require("../validations/validator");
-const controller = require("../controllers/controllers");
-const cors = require("cors");
-const router = express.Router();
+const Router = express.Router();
+import {
+  vin_val,
+  getPaymentVal,
+  setPaymentVal,
+  registerVal,
+  loginVal,
+  getUser,
+  validate,
+} from "../validations/validator.js";
+import {
+  autoCheck,
+  checkAutoCheck,
+  carafax,
+  checkCarafax,
+  balanceCheck,
+  image,
+  checkImage,
+} from "../controllers/report.js";
+import { register, login, getUser } from "../controllers/auth";
+import { setPayment, getPayment } from "../controllers/payment";
+import cors from "cors";
+const router = Router();
 require("dotenv").config();
 
-const whitelist = ['http://localhost:3000', 'https://test.zaincash.iq']
+const whitelist = ["http://localhost:3000", "https://test.zaincash.iq"];
 var corsOptions = {
-	origin: function (origin, callback) {
-	  if (whitelist.indexOf(origin) !== -1 || !origin) {
-		callback(null, true)
-	  } else {
-		callback(new Error('Not allowed by CORS'))
-	  }
-	}
-  }
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+};
 
-router.get("/autocheck", cors(corsOptions), vin_val(), validate, controller.autocheck);
-router.get("/check_autocheck", cors(corsOptions), vin_val(), validate, controller.check_autocheck);
-router.get("/carfax", cors(corsOptions), vin_val(), validate, controller.carfax);
-router.get("/check_carafax", cors(corsOptions), vin_val(), validate, controller.check_carafax);
-router.get("/balance_check", cors(corsOptions), controller.balance_check);
-router.get("/photo", cors(corsOptions), vin_val(), validate, controller.photo);
-router.get("/check_photo", cors(corsOptions), vin_val(), validate, controller.check_photo);
-router.post("/set_payment", cors(corsOptions), set_payment_val(), validate, controller.set_payment);
-router.post("/get_payment", cors(corsOptions), get_payment_val(), validate, controller.get_payment);
+router.get("/autoCheck", cors(corsOptions), vin_val(), validate, autoCheck);
+router.get(
+  "/checkAutoCheck",
+  cors(corsOptions),
+  vin_val(),
+  validate,
+  checkAutoCheck
+);
+router.get("/carafax", cors(corsOptions), vin_val(), validate, carafax);
+router.get(
+  "/checkCarafax",
+  cors(corsOptions),
+  vin_val(),
+  validate,
+  checkCarafax
+);
+router.get("/balanceCheck", cors(corsOptions), balanceCheck);
+router.get("/image", cors(corsOptions), vin_val(), validate, image);
+router.get("/checkImage", cors(corsOptions), vin_val(), validate, checkImage);
+router.post(
+  "/payment",
+  cors(corsOptions),
+  setPaymentVal(),
+  validate,
+  setPayment
+);
+router.get(
+  "/payment",
+  cors(corsOptions),
+  getPaymentVal(),
+  validate,
+  getPayment
+);
+router.post("/register", cors(corsOptions), registerVal(), validate, register);
+router.get("/login", cors(corsOptions), loginVal(), validate, login);
+router.get("/getUser", cors(corsOptions), getUserVal(), validate, getUser);
 
-module.exports = router;
+export default router;
