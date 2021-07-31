@@ -1,19 +1,26 @@
-import bcrypt from "bcrypt";
-import saltRound from "../utils/constant";
+const bcrypt = require("bcrypt");
+const { nextTick } = require("process");
+const constants = require("../utils/constant");
 
-export function getCurrentTime() {
-  return Date.now() / 1000;
-}
+exports.getCurrentTime = () => {
+  const currentTime = Math.floor(Date.now()/1000);
+  return currentTime;
+};
 
-export function encyptPsswd(psswd) {
-  const salt = bcrypt.genSalt(saltRound);
-  const hashPassword = bcrypt(psswd, salt);
-  return hashPassword;
-}
+exports.encyptPsswd = async (psswd) => {
+  try {
+    const salt = await bcrypt.genSalt(constants.saltRounds);
+    const hashPassword = await bcrypt.hash(psswd, salt);
+    return hashPassword;
+  } catch (error) {
+    next(error);
+  }
+};
 
-export function urlBuilder(req, reportType) {
+exports.urlBuilder = (req, reportType) => {
   let vincode = req.query.vincode;
   let url = "";
+  let rarType = req.query.rarType;
   switch (reportType) {
     case "autoCheck":
       url =
@@ -52,7 +59,6 @@ export function urlBuilder(req, reportType) {
         constants.api_key;
       break;
     case "image":
-      let rarType = req.query.rarType;
       url =
         constants.api_url +
         `/photo/${rarType}" +
@@ -62,7 +68,6 @@ export function urlBuilder(req, reportType) {
         ${constants.api_key}`;
       break;
     case "checkImage":
-      let rarType = req.query.rarType;
       url =
         constants.api_url +
         `/photo/check/${rarType}" +
@@ -71,8 +76,12 @@ export function urlBuilder(req, reportType) {
         "&api_key=" +
         ${constants.api_key}`;
       break;
+    case "checkBalance":
+      url =
+        constants.api_url + "/carfax/balance" + "?api_key=" + constants.api_key;
+      break;
 
     default:
       break;
   }
-}
+};

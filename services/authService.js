@@ -1,53 +1,51 @@
-import model from "../model/model";
-import user from "../dto/user";
-import {encyptPsswd} from  "../utils/util"
+const model = require("../models/model.js");
+const user = require("../dto/user.js");
+const { encyptPsswd } = require("../utils/util.js");
 
-
-export function register(req) {
+exports.register = async(req, res) => {
   try {
-    const psswd = req.body.US_Psswd;
-    if(psswd){
-      psswd = encyptPsswd(psswd);
+    let psswd = req.body.US_Psswd;
+    if (psswd) {
+      psswd = await encyptPsswd(psswd);
     }
-    req.body[psswd] = psswd;
+    req.body["US_Psswd"] = psswd;
     const userData = user.register(req);
     const dbDetails = {
       userData: userData,
       table: "Users",
     };
-    const res = model.insert(dbDetails);
+    model.insert(dbDetails);
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.login = (req) => {
+  try {
+    const res = {};
+    const email = req.body.email;
+    const password = req.body.password;
+    const passwordHash = model.fetchByEmail(email)[0].US_Psswd;
+    if (bcrypt.compareSync(password, passwordHash)) {
+      res = model.insert(dbDetails);
+    }
     return res;
   } catch (error) {
     throw error;
   }
-}
+};
 
-export function login(req) {
-    try {
-      const res = {};
-      const email = req.body.email;
-      const password = req.body.password;
-      const passwordHash = model.fetchByEmail(email)[0].US_Psswd;
-      if(bcrypt.compareSync(password, passwordHash)){
-        res = model.insert(dbDetails);
-      }
-      return res;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-export function getUser(req) {
+exports.getUser = (req) => {
   try {
     const dbDetails = {};
-    const res;
+    let res = {};
     if (req.query.id === "*") {
       dbDetails = {
         column: "*",
         condition: {},
         table: "Users",
       };
-    res = model.fetchAll(dbDetails);
+      res = model.fetchAll(dbDetails);
     } else {
       dbDetails = {
         column: "*",
@@ -62,4 +60,4 @@ export function getUser(req) {
   } catch (error) {
     throw error;
   }
-}
+};

@@ -1,5 +1,5 @@
-import axios from "axios";
+const axios = require("axios");
 
-export async function get(url) {
+exports.get = async (url) => {
   return await axios.get(url);
-}
+};

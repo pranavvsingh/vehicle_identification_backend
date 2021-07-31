@@ -1,21 +1,20 @@
-import express from "express";
-var bodyParser = require('body-parser')
-import routes from "./routes/routes.js";
-import helmet from "helmet";
-import cors from "cors";
+var express = require('express');
+var bodyParser = require("body-parser");
+var routes = require("./routes/routes.js");
+var helmet = require("helmet");
+var cors = require("cors");
 require("dotenv").config();
 
 var app = express();
 app.use(cors());
 app.use(helmet());
-app.use(xss());
 app.use(
-    bodyParser.json({
+  bodyParser.json({
     limit: "100mb",
   })
 );
 app.use(
-    bodyParser.urlencoded({
+  bodyParser.urlencoded({
     limit: "100mb",
   })
 );
@@ -26,6 +25,6 @@ if (process.env.NODE_ENV == "production" || process.env.NODE_ENV == "staging") {
   app.listen(process.env.PORT || 443);
   console.log("Server started ...");
 } else {
-  app.listen(process.env.PORT || 443);
-  console.log("Server started ...", process.env.PORT);
+  app.listen(process.env.PORT || 8080);
+  console.log("Server started ...");
 }

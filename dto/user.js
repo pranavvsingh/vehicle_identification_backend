@@ -1,6 +1,6 @@
-import util from "../util/util/";
+const util = require("../utils/util.js");
 
-export function register(req) {
+exports.register = (req) => {
   const userData = {
     US_Email: req.body.US_Email,
     US_Mobile: req.body.US_Mobile,
@@ -11,4 +11,4 @@ export function register(req) {
     US_UpdatedAt: util.getCurrentTime(),
   };
   return userData;
-}
+};

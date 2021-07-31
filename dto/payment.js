@@ -1,6 +1,6 @@
-import util from "../util/util/";
+const util = require("../utils/util.js");
 
-export function payment(req) {
+exports.payment = (req) => {
   const paymentData = {
     Pay_US_Id: req.body.Pay_US_Id,
     Pay_Status: req.body.Pay_Status,
@@ -12,4 +12,4 @@ export function payment(req) {
     Pay_UpdatedAt: util.getCurrentTime(),
   };
   return paymentData;
-}
+};

@@ -1,25 +1,25 @@
-import { authService } from "../service/authService";
+const authService = require("../services/authService.js");
 
-export function register(req, res, next) {
+exports.register = (req, res, next) => {
   try {
     authService.register(req, res);
   } catch (error) {
     next(error);
   }
-}
+};
 
-export function login() {
+exports.login = (req, res, next) => {
   try {
     authService.login(req, res);
   } catch (error) {
     next(error);
   }
-}
+};
 
-export function getUser() {
+exports.getUser = (req, res, next) => {
   try {
     authService.getUser(req, res);
   } catch (error) {
     next(error);
   }
-}
+};

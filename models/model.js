@@ -1,18 +1,14 @@
 const { constant } = require("async");
 const { query } = require("../db/db");
 
-exports.insert = async (table, data) => {
+exports.insert = async (dbDetails) => {
   try {
-    const email = data.email;
-    const phone = data.phone;
-    const payment = data.payment;
-    const carafax = data.carafax;
-    const autocheck = data.autocheck;
-    const image = data.image;
+    const userData = JSON.stringify(dbDetails.userData);
+    const getUserDataId = getLastInserted(dbDetails.table);
     const rows = await query(
-      `INSERT INTO ${table} (email,phone,payment,carafax,autocheck,image) VALUES ("${email}",${phone},${payment},${carafax},${autocheck},${image})`
+      `INSERT INTO ${dbDetails.table} VALUES ('${userData}')`
     );
-    return rows;
+    responseHandler.send(res, "success", 200, rows);
   } catch (error) {
     throw error;
   }
@@ -32,7 +28,7 @@ exports.fetch = async (column, table, condition) => {
     const rows = await query(
       `SELECT ${column} FROM ${table} WHERE ${whereCondition}`
     );
-    return rows;
+    responseHandler.send(res, "success", 200, rows);
   } catch (error) {
     throw error;
   }
@@ -44,20 +40,20 @@ exports.fetchAll = async (column, table) => {
       column = column.join(",");
     }
     const rows = await query(`SELECT ${column} FROM ${table}`);
-    return rows;
+    responseHandler.send(res, "success", 200, rows);
   } catch (error) {
     throw error;
   }
 };
 
-export function fetchByEmail(email) {
+exports.fetchByEmail = async (email) => {
   try {
     const table = "Users";
     const rows = await query(
       `SELECT * FROM ${table} WHERE ${US_Email} = email`
     );
-    return rows;
+    responseHandler.send(res, "success", 200, rows);
   } catch (error) {
     throw error;
   }
-}
+};

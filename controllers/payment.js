@@ -1,17 +1,17 @@
-import { paymentService } from "../service/authService";
+const { paymentService } = require("../services/paymentService.js");
 
-export function setPayment(req, res, next) {
+exports.setPayment = (req, res, next) => {
   try {
     paymentService.setPayment(req, res);
   } catch (error) {
     next(error);
   }
-}
+};
 
-export function getPayment(req, res, next) {
+exports.getPayment = (req, res, next) => {
   try {
     paymentService.getPayment(req, res);
   } catch (error) {
     next(error);
   }
-}
+};

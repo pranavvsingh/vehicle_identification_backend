@@ -1,26 +1,26 @@
-const Router = express.Router();
-import {
+const express = require("express");
+const {
   vin_val,
   getPaymentVal,
   setPaymentVal,
   registerVal,
   loginVal,
-  getUser,
+  getUserVal,
   validate,
-} from "../validations/validator.js";
-import {
+} = require("../validations/validator.js");
+const {
   autoCheck,
   checkAutoCheck,
   carafax,
   checkCarafax,
-  balanceCheck,
+  checkBalance,
   image,
   checkImage,
-} from "../controllers/report.js";
-import { register, login, getUser } from "../controllers/auth";
-import { setPayment, getPayment } from "../controllers/payment";
-import cors from "cors";
-const router = Router();
+} = require( "../controllers/report.js");
+const { register, login, getUser } =  require("../controllers/auth.js");
+const { setPayment, getPayment } = require("../controllers/payment.js");
+const cors = require("cors");
+const router = express.Router();
 require("dotenv").config();
 
 const whitelist = ["http://localhost:3000", "https://test.zaincash.iq"];
@@ -50,7 +50,7 @@ router.get(
   validate,
   checkCarafax
 );
-router.get("/balanceCheck", cors(corsOptions), balanceCheck);
+router.get("/checkBalance", cors(corsOptions), checkBalance);
 router.get("/image", cors(corsOptions), vin_val(), validate, image);
 router.get("/checkImage", cors(corsOptions), vin_val(), validate, checkImage);
 router.post(
@@ -71,4 +71,4 @@ router.post("/register", cors(corsOptions), registerVal(), validate, register);
 router.get("/login", cors(corsOptions), loginVal(), validate, login);
 router.get("/getUser", cors(corsOptions), getUserVal(), validate, getUser);
 
-export default router;
+module.exports = router 

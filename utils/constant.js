@@ -9,7 +9,7 @@ const core_vinhub_api_key = "c90eb2fbe2d124e0f54eb30862ac7617";
 
 const saltRounds = 10;
 
-export default {
+module.exports = {
   someError,
   invalidDataFormat,
   api_url,
