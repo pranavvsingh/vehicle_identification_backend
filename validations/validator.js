@@ -4,8 +4,6 @@ const { check, validationResult } = require("express-validator");
 const {
   isNumber,
   isString,
-  isJson,
-  isTimeStamp,
   isBoolean,
   isPsswd,
   isNotNull,
@@ -18,10 +16,11 @@ exports.vin_val = () => {
 
 exports.setPaymentVal = () => {
   return [
+    isNumber("id"),
     isNumber("Pay_Status"),
     isString("Pay_Msg"),
     isString("Pay_Gateway"),
-    isJson("Pay_Rep_Buyed"),
+    isString("Pay_Rep_Buyed"),
     isNumber("Pay_Amount"),
   ];
 };

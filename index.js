@@ -8,16 +8,8 @@ require("dotenv").config();
 var app = express();
 app.use(cors());
 app.use(helmet());
-app.use(
-  bodyParser.json({
-    limit: "100mb",
-  })
-);
-app.use(
-  bodyParser.urlencoded({
-    limit: "100mb",
-  })
-);
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 app.use("/api/v1", routes);
 
@@ -25,6 +17,6 @@ if (process.env.NODE_ENV == "production" || process.env.NODE_ENV == "staging") {
   app.listen(process.env.PORT || 443);
   console.log("Server started ...");
 } else {
-  app.listen(process.env.PORT || 8080);
+  app.listen(8080);
   console.log("Server started ...");
 }

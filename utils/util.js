@@ -38,7 +38,7 @@ exports.getRegisterStatus = async (userId, res) => {
       table: "Users",
     };
     var response = await model.fetch(dbDetails, res);
-    if (response.length > 0) {
+    if (response && response.length > 0) {
       return response[0]["US_Register_Status"];
     } else {
       responseHandler.send(res, "errorcode", 404);

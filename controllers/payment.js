@@ -1,4 +1,4 @@
-const { paymentService } = require("../services/paymentService.js");
+const paymentService  = require("../services/paymentService.js");
 
 exports.setPayment = (req, res, next) => {
   try {
@@ -11,6 +11,14 @@ exports.setPayment = (req, res, next) => {
 exports.getPayment = (req, res, next) => {
   try {
     paymentService.getPayment(req, res);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getPayments = (req, res, next) => {
+  try {
+    paymentService.getPayments(req, res);
   } catch (error) {
     next(error);
   }

@@ -29,7 +29,8 @@ CREATE TABLE `Payments` (
   `Pay_Msg` varchar(200) NOT NULL,
   `Pay_Gateway` varchar(100) NOT NULL,
   `Pay_Rep_Buyed` json DEFAULT NULL,
-  `Pay_Amount` double NOT NULL,
+  `Pay_Amount_Dollar` double NOT NULL,
+  `Pay_Amount_IOD` double NOT NULL,
   `Pay_CreatedAt` int(11) NOT NULL,
   `Pay_UpdatedAt` int(11) NOT NULL,
   PRIMARY KEY (`Pay_Id`)

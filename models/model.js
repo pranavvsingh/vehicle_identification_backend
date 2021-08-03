@@ -13,6 +13,8 @@ exports.insert = async (dbDetails, res) => {
         values.push(`"${data[key]}"`);
       } else if (typeof data[key] == "number") {
         values.push(data[key]);
+      }else if (typeof data[key] == "object") {
+        values.push(`'${JSON.stringify(data[key])}'`);
       }
     }
     columns = columns.join(",");
@@ -25,7 +27,9 @@ exports.insert = async (dbDetails, res) => {
       `select * from ${dbDetails.table} ORDER BY ${dbDetails.idField} DESC
       LIMIT 1; `
     );
-    delete insertedData[0].US_Psswd;
+    if(insertedData[0].US_Psswd){
+      delete insertedData[0].US_Psswd;
+    }
     return insertedData;
   } catch (error) {
     responseHandler.send(res, "errorcode", 500, constants.someError);

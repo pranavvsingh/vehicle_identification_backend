@@ -18,7 +18,7 @@ exports.register = async (req, res, next) => {
         idField: "id",
       };
       var response = await model.insert(dbDetails, res);
-      if (response.length > 0) {
+      if (response && response.length > 0) {
         responseHandler.send(res, "success", 200, response);
       }
     }
@@ -60,7 +60,7 @@ exports.getUser = async (req, res, next) => {
       table: "Users",
     };
     var response = await model.fetch(dbDetails, res);
-    if (response.length > 0) {
+    if (response && response.length > 0) {
       responseHandler.send(res, "success", 200, response);
     } else {
       responseHandler.send(res, "errorcode", 404);
@@ -78,7 +78,7 @@ exports.getUsers = async (req, res, next) => {
       table: "Users",
     };
     var response = await model.fetchAll(dbDetails, res);
-    if (response.length > 0) {
+    if (response && response.length > 0) {
       responseHandler.send(res, "success", 200, response);
     } else {
       responseHandler.send(res, "errorcode", 404);
