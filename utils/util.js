@@ -1,9 +1,11 @@
 const bcrypt = require("bcrypt");
-const { nextTick } = require("process");
 const constants = require("../utils/constant");
+const model = require("../models/model.js");
+const { nextTick } = require("process");
+const responseHandler = require("../responseHandler/responseHandler");
 
 exports.getCurrentTime = () => {
-  const currentTime = Math.floor(Date.now()/1000);
+  const currentTime = Math.floor(Date.now() / 1000);
   return currentTime;
 };
 
@@ -13,7 +15,36 @@ exports.encyptPsswd = async (psswd) => {
     const hashPassword = await bcrypt.hash(psswd, salt);
     return hashPassword;
   } catch (error) {
-    next(error);
+    throw error;
+  }
+};
+
+exports.comparePsswd = async (psswd, psswdHash) => {
+  try {
+    const res = await bcrypt.compare(psswdHash, psswd);
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.getRegisterStatus = async (userId, res) => {
+  try {
+    const dbDetails = {
+      column: ["US_Register_Status"],
+      condition: {
+        id: userId,
+      },
+      table: "Users",
+    };
+    var response = await model.fetch(dbDetails, res);
+    if (response.length > 0) {
+      return response[0]["US_Register_Status"];
+    } else {
+      responseHandler.send(res, "errorcode", 404);
+    }
+  } catch (error) {
+    throw error;
   }
 };
 

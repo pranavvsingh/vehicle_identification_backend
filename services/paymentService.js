@@ -30,7 +30,7 @@ exports.getPayment = (req) => {
       dbDetails = {
         column: "*",
         condition: {
-          Pay_US_Id: req.query.id,
+          id: req.query.id,
         },
         table: "Payments",
       };

@@ -6,7 +6,15 @@ exports.getErrorMsg = (errorCode) => {
       return "Server Error";
     case 401:
       return "Permission Denied";
+    case 409:
+      return "User already exist";
+    case 422:
+      return "Unprocessable Entity";
+    case 403:
+      return "Invalid Username or Password";
+    case 404:
+      return "User does not exist";
     default:
-      break;
+      return "Something went wrong";
   }
 };

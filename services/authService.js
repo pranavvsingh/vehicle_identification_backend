@@ -1,63 +1,89 @@
 const model = require("../models/model.js");
 const user = require("../dto/user.js");
-const { encyptPsswd } = require("../utils/util.js");
+const responseHandler = require("../responseHandler/responseHandler");
+const { comparePsswd } = require("../utils/util");
+const { generateJWT } = require("../jwt/generateJWT.js");
 
-exports.register = async(req, res) => {
+exports.register = async (req, res, next) => {
   try {
-    let psswd = req.body.US_Psswd;
-    if (psswd) {
-      psswd = await encyptPsswd(psswd);
+    let userData = await user.register(req, res);
+
+    const checkUserExist = await model.fetchByEmail(req.body.US_Email);
+    if (checkUserExist.length === 1) {
+      responseHandler.send(res, "errorcode", 409);
+    } else {
+      const dbDetails = {
+        data: userData,
+        table: "Users",
+        idField: "id",
+      };
+      var response = await model.insert(dbDetails, res);
+      if (response.length > 0) {
+        responseHandler.send(res, "success", 200, response);
+      }
     }
-    req.body["US_Psswd"] = psswd;
-    const userData = user.register(req);
+  } catch (error) {
+    responseHandler.send(res, "errorcode", 500);
+  }
+};
+
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.query;
+    const userData = await model.fetchByEmail(email);
+    if (userData.length > 0) {
+      if (await comparePsswd(userData[0]["US_Psswd"], password)) {
+        delete userData[0].US_Psswd;
+        if (userData[0]["US_Register_Status"] == 1) {
+          const token = await generateJWT(userData[0]);
+          userData[0]["US_Token"] = token;
+        }
+        responseHandler.send(res, "success", 200, userData);
+      } else {
+        responseHandler.send(res, "errorcode", 403);
+      }
+    } else {
+      responseHandler.send(res, "errorcode", 404);
+    }
+  } catch (error) {
+    responseHandler.send(res, "errorcode", 403);
+  }
+};
+
+exports.getUser = async (req, res, next) => {
+  try {
     const dbDetails = {
-      userData: userData,
+      column: "*",
+      condition: {
+        id: req.query.id,
+      },
       table: "Users",
     };
-    model.insert(dbDetails);
-  } catch (error) {
-    throw error;
-  }
-};
-
-exports.login = (req) => {
-  try {
-    const res = {};
-    const email = req.body.email;
-    const password = req.body.password;
-    const passwordHash = model.fetchByEmail(email)[0].US_Psswd;
-    if (bcrypt.compareSync(password, passwordHash)) {
-      res = model.insert(dbDetails);
-    }
-    return res;
-  } catch (error) {
-    throw error;
-  }
-};
-
-exports.getUser = (req) => {
-  try {
-    const dbDetails = {};
-    let res = {};
-    if (req.query.id === "*") {
-      dbDetails = {
-        column: "*",
-        condition: {},
-        table: "Users",
-      };
-      res = model.fetchAll(dbDetails);
+    var response = await model.fetch(dbDetails, res);
+    if (response.length > 0) {
+      responseHandler.send(res, "success", 200, response);
     } else {
-      dbDetails = {
-        column: "*",
-        condition: {
-          US_Id: req.query.id,
-        },
-        table: "Users",
-      };
-      res = model.fetch(dbDetails);
+      responseHandler.send(res, "errorcode", 404);
     }
-    return res;
   } catch (error) {
-    throw error;
+    responseHandler.send(res, "errorcode", 500);
+  }
+};
+
+exports.getUsers = async (req, res, next) => {
+  try {
+    const dbDetails = {
+      column: "*",
+      condition: {},
+      table: "Users",
+    };
+    var response = await model.fetchAll(dbDetails, res);
+    if (response.length > 0) {
+      responseHandler.send(res, "success", 200, response);
+    } else {
+      responseHandler.send(res, "errorcode", 404);
+    }
+  } catch (error) {
+    responseHandler.send(res, "errorcode", 500);
   }
 };

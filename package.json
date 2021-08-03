@@ -36,6 +36,7 @@
     "nodemon": "^1.18.3",
     "path": "^0.12.7",
     "querystring": "^0.2.1",
+    "randomstring": "^1.2.1",
     "request": "^2.87.0",
     "secure-key-store": "1.0.2",
     "util": "^0.12.4",

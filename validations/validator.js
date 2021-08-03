@@ -27,15 +27,15 @@ exports.setPaymentVal = () => {
 };
 
 exports.getPaymentVal = () => {
-  return [isNumber("Pay_US_Id")];
+  return [isNumber("id")];
 };
 
 exports.loginVal = () => {
-  return [isEmail("US_Email"), isPsswd("US_Psswd")];
+  return [isEmail("email"), isPsswd("password")];
 };
 
 exports.getUserVal = () => {
-  return [isNumber("US_Id")];
+  return [isNumber("id")];
 };
 
 exports.registerVal = () => {
@@ -56,5 +56,7 @@ exports.validate = (req, res, next) => {
   }
   const extractedErrors = [];
   errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
-  responseHandler.send(res, "errorcode", 400, extractedErrors);
+  if (extractedErrors.length > 0) {
+    responseHandler.send(res, "errorcode", 422);
+  }
 };

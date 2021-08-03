@@ -1,59 +1,82 @@
-const { constant } = require("async");
 const { query } = require("../db/db");
+const responseHandler = require("../responseHandler/responseHandler");
+const constants = require("../utils/constant");
 
-exports.insert = async (dbDetails) => {
+exports.insert = async (dbDetails, res) => {
   try {
-    const userData = JSON.stringify(dbDetails.userData);
-    const getUserDataId = getLastInserted(dbDetails.table);
+    const data = dbDetails.data;
+    let columns = [];
+    let values = [];
+    for (var key in data) {
+      columns.push(key);
+      if (typeof data[key] == "string") {
+        values.push(`"${data[key]}"`);
+      } else if (typeof data[key] == "number") {
+        values.push(data[key]);
+      }
+    }
+    columns = columns.join(",");
+    values = values.join(",");
+
     const rows = await query(
-      `INSERT INTO ${dbDetails.table} VALUES ('${userData}')`
+      `INSERT INTO ${dbDetails.table} (${columns}) VALUES (${values});`
     );
-    responseHandler.send(res, "success", 200, rows);
+    const insertedData = await query(
+      `select * from ${dbDetails.table} ORDER BY ${dbDetails.idField} DESC
+      LIMIT 1; `
+    );
+    delete insertedData[0].US_Psswd;
+    return insertedData;
   } catch (error) {
-    throw error;
+    responseHandler.send(res, "errorcode", 500, constants.someError);
   }
 };
 
-exports.fetch = async (column, table, condition) => {
+exports.fetch = async (dbDetails, res) => {
   try {
+    let column = dbDetails.column;
+    let condition = dbDetails.condition;
+    let table = dbDetails.table;
     if (column !== "*") {
       column = column.join(",");
     }
-    var consant = [];
-    for (var key in condition) {
+    let consant = [];
+    for (let key in condition) {
       consant.push(`${key}="${condition[key]}"`);
     }
-    var whereCondition = consant.join(" and ");
-    console.log(`SELECT ${column} FROM ${table} WHERE ${whereCondition}`);
+    let whereCondition = consant.join(" and ");
     const rows = await query(
       `SELECT ${column} FROM ${table} WHERE ${whereCondition}`
     );
-    responseHandler.send(res, "success", 200, rows);
+    return rows;
   } catch (error) {
-    throw error;
+    responseHandler.send(res, "errorcode", 500, constants.someError);
   }
 };
 
-exports.fetchAll = async (column, table) => {
+exports.fetchAll = async (dbDetails, res) => {
   try {
+    let column = dbDetails.column;
     if (column !== "*") {
       column = column.join(",");
     }
-    const rows = await query(`SELECT ${column} FROM ${table}`);
-    responseHandler.send(res, "success", 200, rows);
+    const rows = await query(`SELECT ${column} FROM ${dbDetails.table}`);
+    return rows;
   } catch (error) {
-    throw error;
+    responseHandler.send(res, "errorcode", 500, constants.someError);
   }
 };
 
-exports.fetchByEmail = async (email) => {
+exports.fetchByEmail = async (email, next) => {
   try {
     const table = "Users";
+    const field = "US_Email";
+    email = JSON.stringify(email);
     const rows = await query(
-      `SELECT * FROM ${table} WHERE ${US_Email} = email`
+      `SELECT * FROM ${table} WHERE ${field} = ${email}`
     );
-    responseHandler.send(res, "success", 200, rows);
+    return JSON.parse(JSON.stringify(rows));
   } catch (error) {
-    throw error;
+    responseHandler.send(res, "errorcode", 500, constants.someError);
   }
 };
