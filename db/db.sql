@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `Payments`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Payments` (
   `Pay_Id` int(11) NOT NULL AUTO_INCREMENT,
-  `Pay_US_Id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `Pay_Status` int(11) NOT NULL,
   `Pay_Msg` varchar(200) NOT NULL,
   `Pay_Gateway` varchar(100) NOT NULL,
@@ -82,7 +82,7 @@ DROP TABLE IF EXISTS `Sessions`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Sessions` (
   `Sess_Id` int(11) NOT NULL AUTO_INCREMENT,
-  `Sess_US_Id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `Sess_Start_TS` int(11) NOT NULL,
   `Sess_Expiry_TS` int(11) NOT NULL,
   `Sess_CreatedAt` int(11) NOT NULL,
@@ -108,15 +108,15 @@ DROP TABLE IF EXISTS `Users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Users` (
-  `US_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `US_Email` varchar(100) DEFAULT NULL,
   `US_Mobile` int(11) DEFAULT NULL,
-  `US_Psswd` varchar(40) DEFAULT NULL,
+  `US_Psswd` varchar(100) DEFAULT NULL,
   `US_Register_Status` int(11) NOT NULL,
   `US_Country` varchar(10) DEFAULT NULL,
   `US_CreatedAt` int(11) NOT NULL,
   `US_UpdatedAt` int(11) NOT NULL,
-  PRIMARY KEY (`US_Id`),
+  PRIMARY KEY (`id`),
   UNIQUE KEY `US_Email` (`US_Email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
