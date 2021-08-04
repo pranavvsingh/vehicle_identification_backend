@@ -1,5 +1,4 @@
 const authService = require("../services/authService.js");
-const responseHandler = require("../responseHandler/responseHandler");
 
 exports.register = (req, res, next) => {
   try {

@@ -1,4 +1,6 @@
 const express = require("express");
+const auth = require("../jwt/verifyJWT");
+const cors = require("cors");
 const {
   vin_val,
   getPaymentVal,
@@ -16,15 +18,22 @@ const {
   checkBalance,
   image,
   checkImage,
-} = require("../controllers/report.js");
-const { register, login, getUser, getUsers } = require("../controllers/auth.js");
+} = require("../controllers/report");
+
+const {
+  register,
+  login,
+  getUser,
+  getUsers,
+} = require("../controllers/auth.js");
+const { zainCash, redirect } = require("../controllers/payGateway.js");
 const { setPayment, getPayment } = require("../controllers/payment.js");
-const auth = require("../jwt/verifyJWT");
-const cors = require("cors");
+const { sendMessage } = require("../controllers/message.js");
+const { sendMail } = require("../controllers/mail.js");
 const router = express.Router();
 require("dotenv").config();
 
-const whitelist = ["http://localhost:3000", "https://test.zaincash.iq"];
+const whitelist = ["http://localhost:3000"];
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1 || !origin) {
@@ -34,15 +43,8 @@ var corsOptions = {
     }
   },
 };
+router.get("/autoCheck", cors(corsOptions), vin_val(), validate, autoCheck);
 
-router.get(
-  "/autoCheck",
-  cors(corsOptions),
-  auth,
-  vin_val(),
-  validate,
-  autoCheck
-);
 router.get(
   "/checkAutoCheck",
   cors(corsOptions),
@@ -59,15 +61,8 @@ router.get(
   checkCarafax
 );
 router.get("/checkBalance", cors(corsOptions), checkBalance);
-router.get("/image", cors(corsOptions), auth, vin_val(), validate, image);
-router.get(
-  "/checkImage",
-  cors(corsOptions),
-  auth,
-  vin_val(),
-  validate,
-  checkImage
-);
+router.get("/image", cors(corsOptions), vin_val(), validate, image);
+router.get("/checkImage", cors(corsOptions), vin_val(), validate, checkImage);
 router.post(
   "/payment",
   cors(corsOptions),
@@ -84,6 +79,14 @@ router.get(
   validate,
   getPayment
 );
+router.post("/zainCash", cors(corsOptions), auth, zainCash);
+
+router.post("/message", cors(corsOptions), sendMessage);
+
+router.post("/mail", cors(corsOptions), sendMail);
+
+router.get("/redirect", cors(corsOptions), auth, redirect);
+
 router.post("/register", cors(corsOptions), registerVal(), validate, register);
 router.get("/login", cors(corsOptions), loginVal(), validate, login);
 router.get(
@@ -94,10 +97,6 @@ router.get(
   validate,
   getUser
 );
-router.get(
-  "/getUsers",
-  cors(corsOptions),
-  getUsers
-);
+router.get("/getUsers", cors(corsOptions), getUsers);
 
 module.exports = router;

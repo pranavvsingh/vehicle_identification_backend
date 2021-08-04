@@ -3,6 +3,7 @@ const constants = require("../utils/constant");
 const model = require("../models/model.js");
 const { nextTick } = require("process");
 const responseHandler = require("../responseHandler/responseHandler");
+var randomstring = require("randomstring");
 
 exports.getCurrentTime = () => {
   const currentTime = Math.floor(Date.now() / 1000);
@@ -18,6 +19,10 @@ exports.encyptPsswd = async (psswd) => {
     throw error;
   }
 };
+
+exports.randomeGenerated = (length) =>{
+  return randomstring.generate(length);
+}
 
 exports.comparePsswd = async (psswd, psswdHash) => {
   try {

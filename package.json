@@ -33,13 +33,16 @@
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
     "node-fetch": "^2.6.1",
+    "node-mailjet": "^3.3.4",
     "nodemon": "^1.18.3",
     "path": "^0.12.7",
     "querystring": "^0.2.1",
     "randomstring": "^1.2.1",
     "request": "^2.87.0",
     "secure-key-store": "1.0.2",
+    "twilio": "^3.66.1",
     "util": "^0.12.4",
-    "xss-clean": "^0.1.1"
+    "xss-clean": "^0.1.1",
+    "zaincash": "^1.0.5"
   }
 }
