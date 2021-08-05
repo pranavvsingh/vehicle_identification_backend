@@ -23,7 +23,7 @@ exports.register = async (req, res, next) => {
       }
     }
   } catch (error) {
-    responseHandler.send(res, "errorcode", 500);
+    throw error;
   }
 };
 
@@ -46,7 +46,7 @@ exports.login = async (req, res) => {
       responseHandler.send(res, "errorcode", 404);
     }
   } catch (error) {
-    responseHandler.send(res, "errorcode", 403);
+    throw error;
   }
 };
 
@@ -66,7 +66,7 @@ exports.getUser = async (req, res, next) => {
       responseHandler.send(res, "errorcode", 404);
     }
   } catch (error) {
-    responseHandler.send(res, "errorcode", 500);
+    throw error;
   }
 };
 
@@ -84,6 +84,6 @@ exports.getUsers = async (req, res, next) => {
       responseHandler.send(res, "errorcode", 404);
     }
   } catch (error) {
-    responseHandler.send(res, "errorcode", 500);
+    throw error;
   }
 };
