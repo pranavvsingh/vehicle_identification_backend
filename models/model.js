@@ -13,7 +13,7 @@ exports.insert = async (dbDetails, res) => {
         values.push(`"${data[key]}"`);
       } else if (typeof data[key] == "number") {
         values.push(data[key]);
-      }else if (typeof data[key] == "object") {
+      } else if (typeof data[key] == "object") {
         values.push(`'${JSON.stringify(data[key])}'`);
       }
     }
@@ -27,12 +27,12 @@ exports.insert = async (dbDetails, res) => {
       `select * from ${dbDetails.table} ORDER BY ${dbDetails.idField} DESC
       LIMIT 1; `
     );
-    if(insertedData[0].US_Psswd){
+    if (insertedData[0].US_Psswd) {
       delete insertedData[0].US_Psswd;
     }
     return insertedData;
   } catch (error) {
-    responseHandler.send(res, "errorcode", 500, constants.someError);
+    throw error;
   }
 };
 
@@ -54,7 +54,7 @@ exports.fetch = async (dbDetails, res) => {
     );
     return rows;
   } catch (error) {
-    responseHandler.send(res, "errorcode", 500, constants.someError);
+    throw error;
   }
 };
 
@@ -67,7 +67,7 @@ exports.fetchAll = async (dbDetails, res) => {
     const rows = await query(`SELECT ${column} FROM ${dbDetails.table}`);
     return rows;
   } catch (error) {
-    responseHandler.send(res, "errorcode", 500, constants.someError);
+    throw error;
   }
 };
 
@@ -81,6 +81,6 @@ exports.fetchByEmail = async (email, next) => {
     );
     return JSON.parse(JSON.stringify(rows));
   } catch (error) {
-    responseHandler.send(res, "errorcode", 500, constants.someError);
+    throw error;
   }
 };
