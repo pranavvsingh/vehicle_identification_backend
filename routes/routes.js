@@ -88,7 +88,7 @@ router.post("/mail", cors(corsOptions), sendMail);
 router.get("/redirect", cors(corsOptions), auth, redirect);
 
 router.post("/register", cors(corsOptions), registerVal(), validate, register);
-router.get("/login", cors(corsOptions), loginVal(), validate, login);
+router.post("/login", cors(corsOptions), loginVal(), validate, login);
 router.get(
   "/getUser",
   cors(corsOptions),

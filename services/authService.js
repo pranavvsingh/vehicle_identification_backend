@@ -29,7 +29,7 @@ exports.register = async (req, res, next) => {
 
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.query;
+    const { email, password } = req.body;
     const userData = await model.fetchByEmail(email);
     if (userData.length > 0) {
       if (await comparePsswd(userData[0]["US_Psswd"], password)) {
