@@ -4,6 +4,8 @@ const model = require("../models/model.js");
 const { nextTick } = require("process");
 const responseHandler = require("../responseHandler/responseHandler");
 var randomstring = require("randomstring");
+const config = process.env;
+const jwt = require("jsonwebtoken");
 
 exports.getCurrentTime = () => {
   const currentTime = Math.floor(Date.now() / 1000);
@@ -20,14 +22,29 @@ exports.encyptPsswd = async (psswd) => {
   }
 };
 
-exports.randomeGenerated = (length) =>{
+exports.randomeGenerated = (length) => {
   return randomstring.generate(length);
-}
+};
 
 exports.comparePsswd = async (psswd, psswdHash) => {
   try {
     const res = await bcrypt.compare(psswdHash, psswd);
     return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.getUsersFromJwt = async (req, res, next) => {
+  try {
+    let decoded = {};
+    let token =
+      req.body.token || req.query.token || req.headers["authorization"];
+    if (token) {
+      token = token.replace("Bearer ", "");
+      decoded = jwt.verify(token, config.TOKEN_KEY);
+    }
+    return decoded;
   } catch (error) {
     throw error;
   }

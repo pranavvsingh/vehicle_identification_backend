@@ -6,6 +6,7 @@ const {
   getPaymentVal,
   setPaymentVal,
   registerVal,
+  userInfoVal,
   loginVal,
   getUserVal,
   validate,
@@ -22,6 +23,7 @@ const {
 
 const {
   register,
+  saveUserInfo,
   login,
   getUser,
   getUsers,
@@ -88,6 +90,14 @@ router.post("/mail", cors(corsOptions), sendMail);
 router.get("/redirect", cors(corsOptions), auth, redirect);
 
 router.post("/register", cors(corsOptions), registerVal(), validate, register);
+router.post(
+  "/saveUserInfo",
+  cors(corsOptions),
+  userInfoVal(),
+  validate,
+  auth,
+  saveUserInfo
+);
 router.post("/login", cors(corsOptions), loginVal(), validate, login);
 router.get(
   "/getUser",

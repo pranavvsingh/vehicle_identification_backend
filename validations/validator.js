@@ -40,9 +40,14 @@ exports.getUserVal = () => {
 exports.registerVal = () => {
   return [
     isEmail("US_Email"),
-    isNumber("US_Mobile"),
     isPsswd("US_Psswd"),
     isBoolean("US_Register_Status"),
+  ];
+};
+
+exports.userInfoVal = () => {
+  return [
+    isNumber("US_Mobile"),
     isString("US_Country"),
   ];
 };

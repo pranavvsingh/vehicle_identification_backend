@@ -1,3 +1,4 @@
+const { extra } = require("http-status");
 const { query } = require("../db/db");
 const responseHandler = require("../responseHandler/responseHandler");
 const constants = require("../utils/constant");
@@ -40,7 +41,9 @@ exports.fetch = async (dbDetails, res) => {
   try {
     let column = dbDetails.column;
     let condition = dbDetails.condition;
+    let extras = dbDetails.extras;
     let table = dbDetails.table;
+    let rows;
     if (column !== "*") {
       column = column.join(",");
     }
@@ -49,9 +52,16 @@ exports.fetch = async (dbDetails, res) => {
       consant.push(`${key}="${condition[key]}"`);
     }
     let whereCondition = consant.join(" and ");
-    const rows = await query(
-      `SELECT ${column} FROM ${table} WHERE ${whereCondition}`
-    );
+    if (extras) {
+      rows = await query(
+        `SELECT ${column} FROM ${table} WHERE ${whereCondition} ORDER BY ${(extras.replace('""',""))} DESC LIMIT 1`
+      );
+
+    } else {
+      rows = await query(
+        `SELECT ${column} FROM ${table} WHERE ${whereCondition}`
+      );
+    }
     return rows;
   } catch (error) {
     throw error;

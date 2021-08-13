@@ -33,7 +33,8 @@ CREATE TABLE `Payments` (
   `Pay_Amount_IOD` double NOT NULL,
   `Pay_CreatedAt` int(11) NOT NULL,
   `Pay_UpdatedAt` int(11) NOT NULL,
-  PRIMARY KEY (`Pay_Id`)
+  PRIMARY KEY (`Pay_Id`),
+  FOREIGN KEY (id) REFERENCES Users(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -111,20 +112,29 @@ DROP TABLE IF EXISTS `Users`;
 CREATE TABLE `Users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `US_Email` varchar(100) DEFAULT NULL,
-  `US_Mobile` int(11) DEFAULT NULL,
   `US_Psswd` varchar(100) DEFAULT NULL,
   `US_Register_Status` int(11) NOT NULL,
-  `US_Country` varchar(10) DEFAULT NULL,
   `US_CreatedAt` int(11) NOT NULL,
   `US_UpdatedAt` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `US_Email` (`US_Email`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+)
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `Users`
 --
+
+CREATE TABLE `UsersProfile` (
+  `UP_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL,
+  `UP_Mobile` int(11) DEFAULT NULL,
+  `UP_Country` varchar(10) DEFAULT NULL,
+  `UP_CreatedAt` int(11) NOT NULL,
+  `UP_UpdatedAt` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (id) REFERENCES Users(id)
+);
 
 LOCK TABLES `Users` WRITE;
 /*!40000 ALTER TABLE `Users` DISABLE KEYS */;

@@ -8,6 +8,14 @@ exports.register = (req, res, next) => {
   }
 };
 
+exports.saveUserInfo = (req, res, next) => {
+  try {
+    authService.saveUserInfo(req, res);
+  } catch (error) {
+    res.status(400).json({ status: 400, message: error });
+  }
+};
+
 exports.login = (req, res, next) => {
   try {
     authService.login(req, res);

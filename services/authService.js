@@ -1,12 +1,13 @@
 const model = require("../models/model.js");
 const user = require("../dto/user.js");
 const responseHandler = require("../responseHandler/responseHandler");
-const { comparePsswd } = require("../utils/util");
+const { comparePsswd, getUsersFromJwt } = require("../utils/util");
 const { generateJWT } = require("../jwt/generateJWT.js");
+const { validateUser, validateUserInfo } = require("../dto/user");
 
 exports.register = async (req, res, next) => {
   try {
-    let userData = await user.register(req, res);
+    let userData = await validateUser(req, res);
 
     const checkUserExist = await model.fetchByEmail(req.body.US_Email);
     if (checkUserExist.length === 1) {
@@ -18,9 +19,29 @@ exports.register = async (req, res, next) => {
         idField: "id",
       };
       var response = await model.insert(dbDetails, res);
+      const token = await generateJWT(response[0]);
+      response[0]["US_Token"] = token;
       if (response && response.length > 0) {
-        responseHandler.send(res, "success", 200, response);
+        responseHandler.send(res, "success", 200, response[0]);
       }
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.saveUserInfo = async (req, res, next) => {
+  try {
+    let userInfo = await validateUserInfo(req, res);
+
+    const dbDetails = {
+      data: userInfo,
+      table: "UserInfo",
+      idField: "UI_Id",
+    };
+    var response = await model.insert(dbDetails, res);
+    if (response && response.length > 0) {
+      responseHandler.send(res, "success", 200, response[0]);
     }
   } catch (error) {
     throw error;
@@ -52,18 +73,40 @@ exports.login = async (req, res) => {
 
 exports.getUser = async (req, res, next) => {
   try {
-    const dbDetails = {
+    const user = await getUsersFromJwt(req, res, next);
+
+    var dbDetails = {
       column: "*",
       condition: {
-        id: req.query.id,
+        id: user && user.data ? user.data.id : req.query.id,
       },
       table: "Users",
+      extras: "",
     };
-    var response = await model.fetch(dbDetails, res);
-    if (response && response.length > 0) {
-      responseHandler.send(res, "success", 200, response);
+    var userData = await model.fetch(dbDetails, res);
+    dbDetails = {
+      column: "*",
+      condition: {
+        id: user && user.data ? user.data.id : req.query.id,
+      },
+      table: "UserInfo",
+      extras: "UI_Id",
+    };
+    var userInfo = await model.fetch(dbDetails, res);
+    let response  = {
+      ...userData[0],
+      ...userInfo[0],
+    }
+    delete response.US_Psswd;
+    if (userData && userData.length > 0 && userInfo && userInfo.length > 0) {
+      responseHandler.send(
+        res,
+        "success",
+        200,
+        response
+      );
     } else {
-      responseHandler.send(res, "errorcode", 404);
+      responseHandler.send(res, "errorcode", 400);
     }
   } catch (error) {
     throw error;
