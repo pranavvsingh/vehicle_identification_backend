@@ -1,8 +1,6 @@
 const bcrypt = require("bcrypt");
 const constants = require("../utils/constant");
 const model = require("../models/model.js");
-const { nextTick } = require("process");
-const responseHandler = require("../responseHandler/responseHandler");
 var randomstring = require("randomstring");
 const config = process.env;
 const jwt = require("jsonwebtoken");
@@ -50,6 +48,51 @@ exports.getUsersFromJwt = async (req, res, next) => {
   }
 };
 
+exports.getColumnValue = (data) => {
+  let columns = [];
+  let values = [];
+  for (var key in data) {
+    columns.push(key);
+    if (typeof data[key] == "string") {
+      values.push(`"${data[key]}"`);
+    } else if (typeof data[key] == "number") {
+      values.push(data[key]);
+    } else if (typeof data[key] == "object") {
+      values.push(`'${JSON.stringify(data[key])}'`);
+    }
+  }
+  var response = {
+    columns: columns.join(","),
+    values: values.join(","),
+  };
+  return response;
+};
+
+exports.createUpdateQuery = (updatedData) => {
+  if (updatedData) {
+    //where condition query making
+    let condition = updatedData.conditions;
+    let consant_1 = [];
+    for (let key in condition) {
+      consant_1.push(`${key}="${condition[key]}"`);
+    }
+    let whereCondition = consant_1.join(" and ");
+
+    //update condition query making
+    let setValue = updatedData.setValue;
+    let consant_2 = [];
+    for (let key in setValue) {
+      consant_2.push(`${key}="${setValue[key]}"`);
+    }
+    let updateValues = consant_2.join(" , ");
+
+    return {
+      whereCondition,
+      updateValues,
+    };
+  }
+};
+
 exports.getRegisterStatus = async (userId, res) => {
   try {
     const dbDetails = {
@@ -74,62 +117,67 @@ exports.urlBuilder = (req, reportType) => {
   let rarType = req.query.rarType;
   switch (reportType) {
     case "autoCheck":
-      url =
+      return (url =
         constants.api_url +
         "/autocheck" +
         "?vincode=" +
         vincode +
         "&api_key=" +
-        constants.api_key;
+        constants.api_key);
       break;
     case "checkAutoCheck":
-      url =
+      return (url =
         constants.api_url +
         "/autocheck/check" +
         "?vincode=" +
         vincode +
         "&api_key=" +
-        constants.api_key;
+        constants.api_key);
       break;
     case "carafax":
-      url =
+      return (url =
         constants.api_url +
         "/carfax" +
         "?vincode=" +
         vincode +
         "&api_key=" +
-        constants.api_key;
+        constants.api_key);
       break;
     case "checkCarafax":
-      url =
+      return (url =
         constants.api_url +
         "/carfax/check" +
         "?vincode=" +
         vincode +
         "&api_key=" +
-        constants.api_key;
+        constants.api_key);
       break;
     case "image":
-      url =
+      return (url =
         constants.api_url +
-        `/photo/${rarType}" +
+        "/photo/" +
+        rarType +
         "?vincode=" +
-        ${vincode} +
+        vincode +
         "&api_key=" +
-        ${constants.api_key}`;
+        constants.api_key);
       break;
     case "checkImage":
-      url =
+      return (url =
         constants.api_url +
-        `/photo/check/${rarType}" +
+        "/photo/check" +
+        rarType +
         "?vincode=" +
-        ${vincode} +
+        vincode +
         "&api_key=" +
-        ${constants.api_key}`;
+        constants.api_key);
       break;
     case "checkBalance":
-      url =
-        constants.api_url + "/carfax/balance" + "?api_key=" + constants.api_key;
+      return (url =
+        constants.api_url +
+        "/carfax/balance" +
+        "?api_key=" +
+        constants.api_key);
       break;
 
     default:

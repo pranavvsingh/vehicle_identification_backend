@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "setup": "npm install",
-    "start": "nodemon --delay 2000ms index.js"
+    "start": "nodemon --delay 4000ms index.js"
   },
   "keywords": [],
   "author": "Pranav Singh",

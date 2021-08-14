@@ -1,27 +1,21 @@
-const { extra } = require("http-status");
 const { query } = require("../db/db");
-const responseHandler = require("../responseHandler/responseHandler");
-const constants = require("../utils/constant");
+const util = require("../utils/util");
 
 exports.insert = async (dbDetails, res) => {
   try {
     const data = dbDetails.data;
-    let columns = [];
-    let values = [];
-    for (var key in data) {
-      columns.push(key);
-      if (typeof data[key] == "string") {
-        values.push(`"${data[key]}"`);
-      } else if (typeof data[key] == "number") {
-        values.push(data[key]);
-      } else if (typeof data[key] == "object") {
-        values.push(`'${JSON.stringify(data[key])}'`);
-      }
-    }
-    columns = columns.join(",");
-    values = values.join(",");
+    const updatedData = dbDetails.updateData;
 
-    const rows = await query(
+    let { columns, values } = util.getColumnValue(data);
+    if (updatedData) {
+      let { whereCondition, updateValues } =
+        util.createUpdateQuery(updatedData);
+      const queryText = `UPDATE ${dbDetails.table} SET ${updateValues} WHERE ${whereCondition}`
+      await query(
+        `UPDATE ${dbDetails.table} SET ${updateValues} WHERE ${whereCondition}`
+      );
+    }
+    await query(
       `INSERT INTO ${dbDetails.table} (${columns}) VALUES (${values});`
     );
     const insertedData = await query(
@@ -54,9 +48,11 @@ exports.fetch = async (dbDetails, res) => {
     let whereCondition = consant.join(" and ");
     if (extras) {
       rows = await query(
-        `SELECT ${column} FROM ${table} WHERE ${whereCondition} ORDER BY ${(extras.replace('""',""))} DESC LIMIT 1`
+        `SELECT ${column} FROM ${table} WHERE ${whereCondition} ORDER BY ${extras.replace(
+          '""',
+          ""
+        )} DESC LIMIT 1`
       );
-
     } else {
       rows = await query(
         `SELECT ${column} FROM ${table} WHERE ${whereCondition}`

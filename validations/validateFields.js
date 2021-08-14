@@ -2,7 +2,7 @@ const { check } = require("express-validator");
 const constants = require("../utils/constant");
 
 exports.isNumber = (field) => {
-  return check(field).trim().optional({ nullable: true }).isNumeric().escape();
+  return check(field).trim().optional({ nullable: true, checkFalsy: true }).isNumeric().escape();
 };
 
 exports.isString = (field) => {
