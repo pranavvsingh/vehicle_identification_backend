@@ -5,7 +5,6 @@ const responseBuilder = require("../responseHandler/responseBuilder");
 exports.get = async (url, res) => {
   try {
     let response = await axios.get(url);
-    // let response  = {data:200}
     if (response) {
       responseHandler.send(res, "success", 200, response.data);
     }else{

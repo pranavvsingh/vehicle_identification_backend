@@ -23,13 +23,13 @@ const {
 
 const {
   register,
-  saveUserInfo,
+  updateUserInfo,
   login,
   getUser,
   getUsers,
 } = require("../controllers/auth.js");
 const { zainCash, redirect } = require("../controllers/payGateway.js");
-const { setPayment, getPayment } = require("../controllers/payment.js");
+const { setPayment, getPayment,reports } = require("../controllers/payment.js");
 const { sendMessage } = require("../controllers/message.js");
 const { sendMail } = require("../controllers/mail.js");
 const router = express.Router();
@@ -81,6 +81,7 @@ router.get(
   validate,
   getPayment
 );
+router.get("/reports", cors(corsOptions), reports);
 router.post("/zainCash", cors(corsOptions), auth, zainCash);
 
 router.post("/message", cors(corsOptions), sendMessage);
@@ -91,12 +92,12 @@ router.get("/redirect", cors(corsOptions), auth, redirect);
 
 router.post("/register", cors(corsOptions), registerVal(), validate, register);
 router.post(
-  "/saveUserInfo",
+  "/updateUserInfo",
   cors(corsOptions),
   userInfoVal(),
   validate,
   auth,
-  saveUserInfo
+  updateUserInfo
 );
 router.post("/login", cors(corsOptions), loginVal(), validate, login);
 router.get(

@@ -71,3 +71,21 @@ exports.getPayments = async (req, res) => {
     responseBuilder.send(res, "errorcode", 500, error);
   }
 };
+
+exports.reports = async (req, res) => {
+  try {
+    const dbDetails = {
+      column: "*",
+      condition: {},
+      table: "Reports",
+    };
+    var response = await model.fetchAll(dbDetails);
+    if (response && response && response.length > 0) {
+      responseHandler.send(res, "success", 200, response);
+    } else {
+      responseHandler.send(res, "errorcode", 404);
+    }
+  } catch (error) {
+    responseBuilder.send(res, "errorcode", 500, error);
+  }
+};

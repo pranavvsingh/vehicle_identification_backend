@@ -23,3 +23,11 @@ exports.getPayments = (req, res, next) => {
     next(error);
   }
 };
+
+exports.reports = (req, res, next) => {
+  try {
+    paymentService.reports(req, res);
+  } catch (error) {
+    next(error);
+  }
+};

@@ -18,7 +18,7 @@ exports.isEmail = (field) => {
 };
 
 exports.isPsswd = (field) => {
-  return check(field).trim().isStrongPassword().escape();
+  return check(field).trim().optional({ nullable: true, checkFalsy: true }).isStrongPassword().escape();
 };
 
 exports.isBoolean = (field) => {

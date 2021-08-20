@@ -8,9 +8,9 @@ exports.register = (req, res, next) => {
   }
 };
 
-exports.saveUserInfo = (req, res, next) => {
+exports.updateUserInfo = (req, res, next) => {
   try {
-    authService.saveUserInfo(req, res);
+    authService.updateUserInfo(req, res);
   } catch (error) {
     res.status(400).json({ status: 400, message: error });
   }

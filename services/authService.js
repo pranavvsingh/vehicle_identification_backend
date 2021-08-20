@@ -3,26 +3,41 @@ const user = require("../dto/user.js");
 const responseHandler = require("../responseHandler/responseHandler");
 const { comparePsswd, getUsersFromJwt } = require("../utils/util");
 const { generateJWT } = require("../jwt/generateJWT.js");
-const { validateUser, validateUserInfo } = require("../dto/user");
+const { validateUser, validateUserInfo, validateUserUpdateInfo } = require("../dto/user");
 
 exports.register = async (req, res, next) => {
   try {
     let userData = await validateUser(req, res);
-
     const checkUserExist = await model.fetchByEmail(req.body.US_Email);
     if (checkUserExist.length === 1) {
       responseHandler.send(res, "errorcode", 409);
     } else {
-      const dbDetails = {
+      let dbDetails = {};
+      dbDetails = {
         data: userData,
         table: "Users",
         idField: "id",
       };
-      var response = await model.insert(dbDetails, res);
-      const token = await generateJWT(response[0]);
-      response[0]["US_Token"] = token;
-      if (response && response.length > 0) {
-        responseHandler.send(res, "success", 200, response[0]);
+      let insertUser = await model.insert(dbDetails, res);
+      let userInfo = await validateUserInfo(req, insertUser, res);
+      dbDetails = {
+        data: userInfo,
+        table: "UserInfo",
+        idField: "UI_Id",
+      };
+      var insertUserInfo = await model.insert(dbDetails, res);
+      if (
+        insertUser &&
+        insertUser.length > 0 &&
+        insertUserInfo &&
+        insertUserInfo.length > 0
+      ) {
+        let response = {};
+        response = {
+          ...insertUser[0],
+          ...insertUserInfo[0],
+        };
+        responseHandler.send(res, "success", 200, response);
       }
     }
   } catch (error) {
@@ -30,9 +45,9 @@ exports.register = async (req, res, next) => {
   }
 };
 
-exports.saveUserInfo = async (req, res, next) => {
+exports.updateUserInfo = async (req, res, next) => {
   try {
-    let userInfo = await validateUserInfo(req, res);
+    let userInfo = await validateUserUpdateInfo(req, res);
 
     const dbDetails = {
       data: userInfo,
@@ -93,18 +108,13 @@ exports.getUser = async (req, res, next) => {
       extras: "UI_Id",
     };
     var userInfo = await model.fetch(dbDetails, res);
-    let response  = {
+    let response = {
       ...userData[0],
       ...userInfo[0],
-    }
+    };
     delete response.US_Psswd;
     if (userData && userData.length > 0 && userInfo && userInfo.length > 0) {
-      responseHandler.send(
-        res,
-        "success",
-        200,
-        response
-      );
+      responseHandler.send(res, "success", 200, response);
     } else {
       responseHandler.send(res, "errorcode", 400);
     }
